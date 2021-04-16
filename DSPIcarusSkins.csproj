@@ -52,6 +52,9 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>Libraries\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>Libraries\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Libraries\UnityEngine.UI.dll</HintPath>
     </Reference>
@@ -59,6 +62,15 @@
   <ItemGroup>
     <Compile Include="DSPIcarusSkins.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Built-In-Skins\blue.png" />
+    <EmbeddedResource Include="Built-In-Skins\bluegold.png" />
+    <EmbeddedResource Include="Built-In-Skins\camoDark.png" />
+    <EmbeddedResource Include="Built-In-Skins\camoLight.png" />
+    <EmbeddedResource Include="Built-In-Skins\camoRWB.png" />
+    <EmbeddedResource Include="Built-In-Skins\color.png" />
+    <EmbeddedResource Include="Built-In-Skins\redgold.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
