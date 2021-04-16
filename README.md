@@ -4,6 +4,8 @@
 
 Allows you to create different skins for Icarus.  Select one of the pre-built skins, or provide a path to a 2048 x 2048 image png file with your own skin.
 
+![Image of built-in skins](https://raw.githubusercontent.com/GreyHak/dsp-icarus-skins/master/BuiltInSkins.jpg)
+
 If you like this mod, please click the thumbs up at the [top of the page](https://dsp.thunderstore.io/package/GreyHak/DSP_Icarus_Skins/) (next to the Total rating).  That would be a nice thank you for me, and help other people to find a mod you enjoy.
 
 If you have issues with this mod, please report them on [GitHub](https://github.com/GreyHak/dsp-icarus-skins/issues).  I try to respond within 12 hours.    You can also contact me at GreyHak#2995 on the [DSP Modding](https://discord.gg/XxhyTNte) Discord #tech-support channel..
