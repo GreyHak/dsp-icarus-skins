@@ -45,6 +45,10 @@ namespace DSPIcarusSkins
                 "DSPIcarusSkins.Built_In_Skins.redgold.png",
             };
 
+        public static UInt16 loadedSkinSelection = UInt16.MaxValue;
+        public static string loadedSkinPath = "";
+        public static DateTime loadedSkinFileModificationTime = DateTime.Now;
+
         public void Awake()
         {
             Logger = base.Logger;  // "C:\Program Files (x86)\Steam\steamapps\common\Dyson Sphere Program\BepInEx\LogOutput.log"
@@ -60,9 +64,8 @@ namespace DSPIcarusSkins
                 Logger.LogDebug($"Resource Name \"{resourceName}\".");
             }*/
 
-            configSkinSelection = Config.Bind<UInt16>("Skin", "Selection", 2, new BepInEx.Configuration.ConfigDescription("0:Path Provided;  1:Dark Camo;  2:Light Camo;  3:Red/White/Blue Camo;  4:Blue;  5:Color;  6:Blue/gold;  7:Red/gold", new BepInEx.Configuration.AcceptableValueRange<UInt16>(0, 8)));
+            configSkinSelection = Config.Bind<UInt16>("Skin", "Selection", 2, new BepInEx.Configuration.ConfigDescription("0:Path provided with custom skin;  1:Dark Camo;  2:Light Camo;  3:Red/White/Blue Camo;  4:Blue;  5:Color;  6:Blue/gold;  7:Red/gold", new BepInEx.Configuration.AcceptableValueRange<UInt16>(0, 7)));
             configSkinPath = Config.Bind<string>("Skin", "Path", "", "Path to the 2048 x 2048 skin image.  This setting is only used if Selection is set to 0.");
-            OnConfigChanged(null, null);
             Config.ConfigReloaded += OnConfigChanged;
             Config.SettingChanged += OnConfigChanged;
         }
@@ -70,6 +73,10 @@ namespace DSPIcarusSkins
         [HarmonyPostfix, HarmonyPatch(typeof(PlayerAnimator), "Start")]
         public static void PlayerAnimator_Start_Postfix()
         {
+            loadedSkinSelection = UInt16.MaxValue;
+            loadedSkinPath = "";
+            loadedSkinFileModificationTime = DateTime.Now;
+
             Config.Reload();
             OnConfigChanged(null, null);
         }
@@ -83,6 +90,10 @@ namespace DSPIcarusSkins
 
         public static void OnConfigChanged(object sender, EventArgs e)
         {
+            if (GameMain.mainPlayer == null || GameMain.mainPlayer.animator == null)
+            {
+                return;
+            }
             bool icarusArmorFlag = false;
             bool icarusSkeletonFlag = false;
             Renderer[] componentsInChildren = GameMain.mainPlayer.animator.GetComponentsInChildren<Renderer>(true);
@@ -93,45 +104,61 @@ namespace DSPIcarusSkins
                 {
                     if (!icarusArmorFlag && mat.name.StartsWith("icarus-armor"))
                     {
+                        bool loadFlag = false;
                         Texture2D newIcarusArmorTexture = new Texture2D(2048, 2048);
                         if (configSkinSelection.Value == 0 || configSkinSelection.Value >= resourceNames.Length)
                         {
                             string icarusArmorFilePath = configSkinPath.Value;
-                            if (System.IO.File.Exists(icarusArmorFilePath))
+                            if (icarusArmorFilePath != loadedSkinPath ||
+                                File.GetLastWriteTime(icarusArmorFilePath) != loadedSkinFileModificationTime)
                             {
-                                byte[] fileData = System.IO.File.ReadAllBytes(icarusArmorFilePath);
-                                if (newIcarusArmorTexture.LoadImage(fileData))
+                                if (System.IO.File.Exists(icarusArmorFilePath))
                                 {
-                                    Logger.LogInfo($"Successfully loaded custom icarus armour skin {icarusArmorFilePath}");
+                                    byte[] fileData = System.IO.File.ReadAllBytes(icarusArmorFilePath);
+                                    if (newIcarusArmorTexture.LoadImage(fileData))
+                                    {
+                                        Logger.LogInfo($"Successfully loaded custom icarus armour skin {icarusArmorFilePath}");
+                                        loadedSkinPath = icarusArmorFilePath;
+                                        loadedSkinFileModificationTime = File.GetLastWriteTime(icarusArmorFilePath);
+                                        loadFlag = true;
+                                    }
                                 }
                             }
                         }
                         else
                         {
-                            string resourceName = resourceNames[configSkinSelection.Value];
-                            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
-                            if (stream != null)
+                            if (configSkinSelection.Value != loadedSkinSelection)
                             {
-                                byte[] fileData = new byte[stream.Length];
-                                stream.Read(fileData, 0, (int)stream.Length);
-                                if (newIcarusArmorTexture.LoadImage(fileData))
+                                string resourceName = resourceNames[configSkinSelection.Value];
+                                Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+                                if (stream != null)
                                 {
-                                    Logger.LogInfo($"Successfully loaded built-in icarus armour skin {resourceName}");
+                                    byte[] fileData = new byte[stream.Length];
+                                    stream.Read(fileData, 0, (int)stream.Length);
+                                    if (newIcarusArmorTexture.LoadImage(fileData))
+                                    {
+                                        Logger.LogInfo($"Successfully loaded built-in icarus armour skin {resourceName}");
+                                        loadedSkinSelection = configSkinSelection.Value;
+                                        loadFlag = true;
+                                    }
                                 }
                             }
                         }
 
-                        for (int x = 0; x < newIcarusArmorTexture.width; x++)
+                        if (loadFlag)
                         {
-                            for (int y = 0; y < newIcarusArmorTexture.height; y++)
+                            for (int x = 0; x < newIcarusArmorTexture.width; x++)
                             {
-                                Color pixel = newIcarusArmorTexture.GetPixel(x, y);
-                                newIcarusArmorTexture.SetPixel(x, y, new Color(pixel.r, pixel.g, pixel.b, 0));
+                                for (int y = 0; y < newIcarusArmorTexture.height; y++)
+                                {
+                                    Color pixel = newIcarusArmorTexture.GetPixel(x, y);
+                                    newIcarusArmorTexture.SetPixel(x, y, new Color(pixel.r, pixel.g, pixel.b, 0));
+                                }
                             }
-                        }
-                        newIcarusArmorTexture.Apply();
+                            newIcarusArmorTexture.Apply();
 
-                        mat.mainTexture = newIcarusArmorTexture;
+                            mat.mainTexture = newIcarusArmorTexture;
+                        }
 
                         icarusArmorFlag = true;
                         if (icarusArmorFlag && icarusSkeletonFlag)
