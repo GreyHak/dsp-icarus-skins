@@ -33,6 +33,7 @@ namespace DSPIcarusSkins
 
         public static BepInEx.Configuration.ConfigEntry<UInt16> configSkinSelection;
         public static BepInEx.Configuration.ConfigEntry<string> configSkinPath;
+        public static BepInEx.Configuration.ConfigEntry<bool> configAutoReload;
 
         public static readonly string[] resourceNames = {
                 "",
@@ -66,6 +67,7 @@ namespace DSPIcarusSkins
 
             configSkinSelection = Config.Bind<UInt16>("Skin", "Selection", 2, new BepInEx.Configuration.ConfigDescription("0:Path provided with custom skin;  1:Dark Camo;  2:Light Camo;  3:Red/White/Blue Camo;  4:Blue;  5:Color;  6:Blue/gold;  7:Red/gold", new BepInEx.Configuration.AcceptableValueRange<UInt16>(0, 7)));
             configSkinPath = Config.Bind<string>("Skin", "Path", "", "Path to the 2048 x 2048 skin image.  This setting is only used if Selection is set to 0.");
+            configAutoReload = Config.Bind<bool>("Skin", "AutoReload", false, "Continually monitor skin file timestamp and automatically reload skin when the file changes.  This is useful while you are creating a skin.  It is recommended that this setting be disabled during normal gameplay.  This setting is only used if Selection is set to 0.");
             Config.ConfigReloaded += OnConfigChanged;
             Config.SettingChanged += OnConfigChanged;
         }
@@ -86,6 +88,18 @@ namespace DSPIcarusSkins
         {
             Config.Reload();
             OnConfigChanged(null, null);
+        }
+
+        [HarmonyPostfix, HarmonyPatch(typeof(Player), "GameTick")]
+        public static void Player_GameTick_Postfix()
+        {
+            if (configSkinSelection.Value == 0 && configAutoReload.Value)
+            {
+                if (File.GetLastWriteTime(configSkinPath.Value) != loadedSkinFileModificationTime)
+                {
+                    OnConfigChanged(null, null);
+                }
+            }
         }
 
         public static void OnConfigChanged(object sender, EventArgs e)

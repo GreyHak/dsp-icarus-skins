@@ -32,5 +32,7 @@ This mod can also be installed using ebkr's [r2modman](https://dsp.thunderstore.
 The source code for this mod is available for download, review and forking on GitHub [here](https://github.com/GreyHak/dsp-icarus-skins) under the BSD 3 clause license.
 
 ## Change Log
+### Next
+ - Auto-reload updated skin.
 ### v1.0.0
  - Initial release.
