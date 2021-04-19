@@ -64,13 +64,22 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Built-In-Skins\blue.png" />
-    <EmbeddedResource Include="Built-In-Skins\bluegold.png" />
-    <EmbeddedResource Include="Built-In-Skins\camoDark.png" />
-    <EmbeddedResource Include="Built-In-Skins\camoLight.png" />
-    <EmbeddedResource Include="Built-In-Skins\camoRWB.png" />
-    <EmbeddedResource Include="Built-In-Skins\color.png" />
-    <EmbeddedResource Include="Built-In-Skins\redgold.png" />
+    <None Include="Built-In-Skins\blue.png" />
+    <None Include="Built-In-Skins\bluegold.png" />
+    <None Include="Built-In-Skins\camoDark.png" />
+    <None Include="Built-In-Skins\camoLight.png" />
+    <None Include="Built-In-Skins\camoRWB.png" />
+    <None Include="Built-In-Skins\color.png" />
+    <None Include="Built-In-Skins\redgold.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Built-In-Skins\blue.jpg" />
+    <EmbeddedResource Include="Built-In-Skins\bluegold.jpg" />
+    <EmbeddedResource Include="Built-In-Skins\camoDark.jpg" />
+    <EmbeddedResource Include="Built-In-Skins\camoLight.jpg" />
+    <EmbeddedResource Include="Built-In-Skins\camoRWB.jpg" />
+    <EmbeddedResource Include="Built-In-Skins\color.jpg" />
+    <EmbeddedResource Include="Built-In-Skins\redgold.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

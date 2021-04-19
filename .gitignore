@@ -4,4 +4,4 @@ bin/Release
 Libraries/*.dll
 obj/Debug
 obj/Release
-Built-In-Skins/*.png
+Built-In-Skins

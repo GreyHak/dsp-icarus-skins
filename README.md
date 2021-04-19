@@ -2,7 +2,7 @@
 
 **DSP Icarus Skins** is a mod for the Unity game Dyson Sphere Program developed by Youthcat Studio and published by Gamera Game.  The game is available on [here](https://store.steampowered.com/app/1366540/Dyson_Sphere_Program/).
 
-This mod makes it possible for you to create different skins for Icarus.  You can either select one of the pre-built skins, or provide a path to a 2048 x 2048 image png file with your own skin.
+This mod makes it possible for you to create different skins for Icarus.  You can either select one of the pre-built skins, or provide a path to a 2048 x 2048 image png or jpg file with your own skin.
 
 ![Image of built-in skins](https://raw.githubusercontent.com/GreyHak/dsp-icarus-skins/master/BuiltInSkins.jpg)
 
@@ -32,7 +32,11 @@ This mod can also be installed using ebkr's [r2modman](https://dsp.thunderstore.
 The source code for this mod is available for download, review and forking on GitHub [here](https://github.com/GreyHak/dsp-icarus-skins) under the BSD 3 clause license.
 
 ## Change Log
-### Next
+### v1.0.1
+ - Decrease DLL size from 30MB to 5MB.
  - Auto-reload updated skin.
+ - Added support for jpg files.
+ - Fixed a bug when changing Selection config using BepInEx.ConfigurationManager, switching to or from Selection 0 not taking effect immediately.
+ - Added error log entry when loading of custom skin fails.
 ### v1.0.0
  - Initial release.

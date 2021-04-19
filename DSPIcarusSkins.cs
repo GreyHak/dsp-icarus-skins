@@ -26,7 +26,7 @@ namespace DSPIcarusSkins
     {
         public const string pluginGuid = "greyhak.dysonsphereprogram.icarusskins";
         public const string pluginName = "DSP Icarus Skins";
-        public const string pluginVersion = "1.0.0";
+        public const string pluginVersion = "1.0.1";
         new internal static ManualLogSource Logger;
         new internal static BepInEx.Configuration.ConfigFile Config;
         Harmony harmony;
@@ -37,13 +37,13 @@ namespace DSPIcarusSkins
 
         public static readonly string[] resourceNames = {
                 "",
-                "DSPIcarusSkins.Built_In_Skins.camoDark.png",
-                "DSPIcarusSkins.Built_In_Skins.camoLight.png",
-                "DSPIcarusSkins.Built_In_Skins.camoRWB.png",
-                "DSPIcarusSkins.Built_In_Skins.blue.png",
-                "DSPIcarusSkins.Built_In_Skins.color.png",
-                "DSPIcarusSkins.Built_In_Skins.bluegold.png",
-                "DSPIcarusSkins.Built_In_Skins.redgold.png",
+                "DSPIcarusSkins.Built_In_Skins.camoDark.jpg",
+                "DSPIcarusSkins.Built_In_Skins.camoLight.jpg",
+                "DSPIcarusSkins.Built_In_Skins.camoRWB.jpg",
+                "DSPIcarusSkins.Built_In_Skins.blue.jpg",
+                "DSPIcarusSkins.Built_In_Skins.color.jpg",
+                "DSPIcarusSkins.Built_In_Skins.bluegold.jpg",
+                "DSPIcarusSkins.Built_In_Skins.redgold.jpg",
             };
 
         public static UInt16 loadedSkinSelection = UInt16.MaxValue;
@@ -91,9 +91,10 @@ namespace DSPIcarusSkins
         }
 
         [HarmonyPostfix, HarmonyPatch(typeof(Player), "GameTick")]
-        public static void Player_GameTick_Postfix()
-        {
-            if (configSkinSelection.Value == 0 && configAutoReload.Value)
+        public static void Player_GameTick_Postfix(long time)
+        {   // time is increased by 1 every tick.  Called at 60 Hz.
+            // GameMain.mainPlayer is always valid
+            if (configSkinSelection.Value == 0 && configAutoReload.Value && ((time % 45) == 0))
             {
                 if (File.GetLastWriteTime(configSkinPath.Value) != loadedSkinFileModificationTime)
                 {
@@ -119,22 +120,28 @@ namespace DSPIcarusSkins
                     if (!icarusArmorFlag && mat.name.StartsWith("icarus-armor"))
                     {
                         bool loadFlag = false;
-                        Texture2D newIcarusArmorTexture = new Texture2D(2048, 2048);
+                        Texture2D icarusArmorTextureFile = new Texture2D(2048, 2048);
                         if (configSkinSelection.Value == 0 || configSkinSelection.Value >= resourceNames.Length)
                         {
                             string icarusArmorFilePath = configSkinPath.Value;
-                            if (icarusArmorFilePath != loadedSkinPath ||
+                            if (configSkinSelection.Value != loadedSkinSelection ||
+                                icarusArmorFilePath != loadedSkinPath ||
                                 File.GetLastWriteTime(icarusArmorFilePath) != loadedSkinFileModificationTime)
                             {
                                 if (System.IO.File.Exists(icarusArmorFilePath))
                                 {
                                     byte[] fileData = System.IO.File.ReadAllBytes(icarusArmorFilePath);
-                                    if (newIcarusArmorTexture.LoadImage(fileData))
+                                    if (icarusArmorTextureFile.LoadImage(fileData))
                                     {
                                         Logger.LogInfo($"Successfully loaded custom icarus armour skin {icarusArmorFilePath}");
+                                        loadedSkinSelection = configSkinSelection.Value;
                                         loadedSkinPath = icarusArmorFilePath;
                                         loadedSkinFileModificationTime = File.GetLastWriteTime(icarusArmorFilePath);
                                         loadFlag = true;
+                                    }
+                                    else
+                                    {
+                                        Logger.LogError($"Failed to load custom icarus armour skin {icarusArmorFilePath}");
                                     }
                                 }
                             }
@@ -149,7 +156,7 @@ namespace DSPIcarusSkins
                                 {
                                     byte[] fileData = new byte[stream.Length];
                                     stream.Read(fileData, 0, (int)stream.Length);
-                                    if (newIcarusArmorTexture.LoadImage(fileData))
+                                    if (icarusArmorTextureFile.LoadImage(fileData))
                                     {
                                         Logger.LogInfo($"Successfully loaded built-in icarus armour skin {resourceName}");
                                         loadedSkinSelection = configSkinSelection.Value;
@@ -161,17 +168,18 @@ namespace DSPIcarusSkins
 
                         if (loadFlag)
                         {
-                            for (int x = 0; x < newIcarusArmorTexture.width; x++)
+                            Texture2D icarusArmorTextureARGB = new Texture2D(2048, 2048);
+                            for (int x = 0; x < icarusArmorTextureARGB.width; x++)
                             {
-                                for (int y = 0; y < newIcarusArmorTexture.height; y++)
+                                for (int y = 0; y < icarusArmorTextureARGB.height; y++)
                                 {
-                                    Color pixel = newIcarusArmorTexture.GetPixel(x, y);
-                                    newIcarusArmorTexture.SetPixel(x, y, new Color(pixel.r, pixel.g, pixel.b, 0));
+                                    Color pixel = icarusArmorTextureFile.GetPixel(x, y);
+                                    icarusArmorTextureARGB.SetPixel(x, y, new Color(pixel.r, pixel.g, pixel.b, 0));
                                 }
                             }
-                            newIcarusArmorTexture.Apply();
+                            icarusArmorTextureARGB.Apply();
 
-                            mat.mainTexture = newIcarusArmorTexture;
+                            mat.mainTexture = icarusArmorTextureARGB;
                         }
 
                         icarusArmorFlag = true;
