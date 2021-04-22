@@ -32,6 +32,8 @@ This mod can also be installed using ebkr's [r2modman](https://dsp.thunderstore.
 The source code for this mod is available for download, review and forking on GitHub [here](https://github.com/GreyHak/dsp-icarus-skins) under the BSD 3 clause license.
 
 ## Change Log
+### v1.0.2
+ - Fixed bug where skin Selection was set to 0 (zero) without a Path specified which was causing an exception.
 ### v1.0.1
  - Decrease DLL size from 30MB to 5MB.
  - Auto-reload updated skin.

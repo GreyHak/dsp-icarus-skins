@@ -26,7 +26,7 @@ namespace DSPIcarusSkins
     {
         public const string pluginGuid = "greyhak.dysonsphereprogram.icarusskins";
         public const string pluginName = "DSP Icarus Skins";
-        public const string pluginVersion = "1.0.1";
+        public const string pluginVersion = "1.0.2";
         new internal static ManualLogSource Logger;
         new internal static BepInEx.Configuration.ConfigFile Config;
         Harmony harmony;
@@ -96,7 +96,7 @@ namespace DSPIcarusSkins
             // GameMain.mainPlayer is always valid
             if (configSkinSelection.Value == 0 && configAutoReload.Value && ((time % 45) == 0))
             {
-                if (File.GetLastWriteTime(configSkinPath.Value) != loadedSkinFileModificationTime)
+                if (configSkinPath.Value.Length > 0 && File.GetLastWriteTime(configSkinPath.Value) != loadedSkinFileModificationTime)
                 {
                     OnConfigChanged(null, null);
                 }
@@ -124,9 +124,10 @@ namespace DSPIcarusSkins
                         if (configSkinSelection.Value == 0 || configSkinSelection.Value >= resourceNames.Length)
                         {
                             string icarusArmorFilePath = configSkinPath.Value;
-                            if (configSkinSelection.Value != loadedSkinSelection ||
+                            if (icarusArmorFilePath.Length > 0 &&
+                                (configSkinSelection.Value != loadedSkinSelection ||
                                 icarusArmorFilePath != loadedSkinPath ||
-                                File.GetLastWriteTime(icarusArmorFilePath) != loadedSkinFileModificationTime)
+                                File.GetLastWriteTime(icarusArmorFilePath) != loadedSkinFileModificationTime))
                             {
                                 if (System.IO.File.Exists(icarusArmorFilePath))
                                 {
