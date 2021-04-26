@@ -26,7 +26,7 @@ namespace DSPIcarusSkins
     {
         public const string pluginGuid = "greyhak.dysonsphereprogram.icarusskins";
         public const string pluginName = "DSP Icarus Skins";
-        public const string pluginVersion = "1.0.2";
+        public const string pluginVersion = "1.0.3";
         new internal static ManualLogSource Logger;
         new internal static BepInEx.Configuration.ConfigFile Config;
         Harmony harmony;
@@ -36,7 +36,7 @@ namespace DSPIcarusSkins
         public static BepInEx.Configuration.ConfigEntry<bool> configAutoReload;
 
         public static readonly string[] resourceNames = {
-                "",
+                "",  // Custom skin
                 "DSPIcarusSkins.Built_In_Skins.camoDark.jpg",
                 "DSPIcarusSkins.Built_In_Skins.camoLight.jpg",
                 "DSPIcarusSkins.Built_In_Skins.camoRWB.jpg",
@@ -44,6 +44,7 @@ namespace DSPIcarusSkins
                 "DSPIcarusSkins.Built_In_Skins.color.jpg",
                 "DSPIcarusSkins.Built_In_Skins.bluegold.jpg",
                 "DSPIcarusSkins.Built_In_Skins.redgold.jpg",
+                "DSPIcarusSkins.Built_In_Skins.ignite.jpg",
             };
 
         public static UInt16 loadedSkinSelection = UInt16.MaxValue;
@@ -65,7 +66,7 @@ namespace DSPIcarusSkins
                 Logger.LogDebug($"Resource Name \"{resourceName}\".");
             }*/
 
-            configSkinSelection = Config.Bind<UInt16>("Skin", "Selection", 2, new BepInEx.Configuration.ConfigDescription("0:Path provided with custom skin;  1:Dark Camo;  2:Light Camo;  3:Red/White/Blue Camo;  4:Blue;  5:Color;  6:Blue/gold;  7:Red/gold", new BepInEx.Configuration.AcceptableValueRange<UInt16>(0, 7)));
+            configSkinSelection = Config.Bind<UInt16>("Skin", "Selection", 2, new BepInEx.Configuration.ConfigDescription("0:Path provided with custom skin;  1:Dark Camo;  2:Light Camo;  3:Red/White/Blue Camo;  4:Blue;  5:Color;  6:Blue/gold;  7:Red/gold;  8:Blue/Red", new BepInEx.Configuration.AcceptableValueRange<UInt16>(0, 8)));
             configSkinPath = Config.Bind<string>("Skin", "Path", "", "Path to the 2048 x 2048 skin image.  This setting is only used if Selection is set to 0.");
             configAutoReload = Config.Bind<bool>("Skin", "AutoReload", false, "Continually monitor skin file timestamp and automatically reload skin when the file changes.  This is useful while you are creating a skin.  It is recommended that this setting be disabled during normal gameplay.  This setting is only used if Selection is set to 0.");
             Config.ConfigReloaded += OnConfigChanged;
@@ -131,18 +132,25 @@ namespace DSPIcarusSkins
                             {
                                 if (System.IO.File.Exists(icarusArmorFilePath))
                                 {
-                                    byte[] fileData = System.IO.File.ReadAllBytes(icarusArmorFilePath);
-                                    if (icarusArmorTextureFile.LoadImage(fileData))
+                                    try
                                     {
-                                        Logger.LogInfo($"Successfully loaded custom icarus armour skin {icarusArmorFilePath}");
-                                        loadedSkinSelection = configSkinSelection.Value;
-                                        loadedSkinPath = icarusArmorFilePath;
-                                        loadedSkinFileModificationTime = File.GetLastWriteTime(icarusArmorFilePath);
-                                        loadFlag = true;
+                                        byte[] fileData = System.IO.File.ReadAllBytes(icarusArmorFilePath);
+                                        if (icarusArmorTextureFile.LoadImage(fileData))
+                                        {
+                                            Logger.LogInfo($"Successfully loaded custom icarus armour skin {icarusArmorFilePath}");
+                                            loadedSkinSelection = configSkinSelection.Value;
+                                            loadedSkinPath = icarusArmorFilePath;
+                                            loadedSkinFileModificationTime = File.GetLastWriteTime(icarusArmorFilePath);
+                                            loadFlag = true;
+                                        }
+                                        else
+                                        {
+                                            Logger.LogError($"Failed to load custom icarus armour skin {icarusArmorFilePath}");
+                                        }
                                     }
-                                    else
+                                    catch (IOException ioException)
                                     {
-                                        Logger.LogError($"Failed to load custom icarus armour skin {icarusArmorFilePath}");
+                                        Logger.LogWarning($"WARNING: IOException while reading \"{icarusArmorFilePath}\": {ioException.Message}");
                                     }
                                 }
                             }
@@ -181,6 +189,7 @@ namespace DSPIcarusSkins
                             icarusArmorTextureARGB.Apply();
 
                             mat.mainTexture = icarusArmorTextureARGB;
+                            UIRoot.instance.uiGame.generalTips.InvokeRealtimeTipAhead("Icarus skin loaded");
                         }
 
                         icarusArmorFlag = true;
