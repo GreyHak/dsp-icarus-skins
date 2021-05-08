@@ -32,6 +32,8 @@ This mod can also be installed using ebkr's [r2modman](https://dsp.thunderstore.
 The source code for this mod is available for download, review and forking on GitHub [here](https://github.com/GreyHak/dsp-icarus-skins) under the BSD 3 clause license.
 
 ## Change Log
+### v1.0.4
+ - Added ArgumentException handler.
 ### v1.0.3
  - Fixed bug; added exception handling for sharing violations while reading in custom skin file.
  - One more built-in skin.

@@ -26,7 +26,7 @@ namespace DSPIcarusSkins
     {
         public const string pluginGuid = "greyhak.dysonsphereprogram.icarusskins";
         public const string pluginName = "DSP Icarus Skins";
-        public const string pluginVersion = "1.0.3";
+        public const string pluginVersion = "1.0.4";
         new internal static ManualLogSource Logger;
         new internal static BepInEx.Configuration.ConfigFile Config;
         Harmony harmony;
@@ -97,9 +97,16 @@ namespace DSPIcarusSkins
             // GameMain.mainPlayer is always valid
             if (configSkinSelection.Value == 0 && configAutoReload.Value && ((time % 45) == 0))
             {
-                if (configSkinPath.Value.Length > 0 && File.GetLastWriteTime(configSkinPath.Value) != loadedSkinFileModificationTime)
+                try
                 {
-                    OnConfigChanged(null, null);
+                    if (configSkinPath.Value.Length > 0 && File.GetLastWriteTime(configSkinPath.Value) != loadedSkinFileModificationTime)
+                    {
+                        OnConfigChanged(null, null);
+                    }
+                }
+                catch (ArgumentException argException)
+                {
+                    Logger.LogWarning($"WARNING: ArgumentException while checking write time \"{configSkinPath.Value}\": {argException.Message}");
                 }
             }
         }
@@ -125,34 +132,41 @@ namespace DSPIcarusSkins
                         if (configSkinSelection.Value == 0 || configSkinSelection.Value >= resourceNames.Length)
                         {
                             string icarusArmorFilePath = configSkinPath.Value;
-                            if (icarusArmorFilePath.Length > 0 &&
-                                (configSkinSelection.Value != loadedSkinSelection ||
-                                icarusArmorFilePath != loadedSkinPath ||
-                                File.GetLastWriteTime(icarusArmorFilePath) != loadedSkinFileModificationTime))
+                            try
                             {
-                                if (System.IO.File.Exists(icarusArmorFilePath))
+                                if (icarusArmorFilePath.Length > 0 &&
+                                    (configSkinSelection.Value != loadedSkinSelection ||
+                                    icarusArmorFilePath != loadedSkinPath ||
+                                    File.GetLastWriteTime(icarusArmorFilePath) != loadedSkinFileModificationTime))
                                 {
-                                    try
+                                    if (System.IO.File.Exists(icarusArmorFilePath))
                                     {
-                                        byte[] fileData = System.IO.File.ReadAllBytes(icarusArmorFilePath);
-                                        if (icarusArmorTextureFile.LoadImage(fileData))
+                                        try
                                         {
-                                            Logger.LogInfo($"Successfully loaded custom icarus armour skin {icarusArmorFilePath}");
-                                            loadedSkinSelection = configSkinSelection.Value;
-                                            loadedSkinPath = icarusArmorFilePath;
-                                            loadedSkinFileModificationTime = File.GetLastWriteTime(icarusArmorFilePath);
-                                            loadFlag = true;
+                                            byte[] fileData = System.IO.File.ReadAllBytes(icarusArmorFilePath);
+                                            if (icarusArmorTextureFile.LoadImage(fileData))
+                                            {
+                                                Logger.LogInfo($"Successfully loaded custom icarus armour skin {icarusArmorFilePath}");
+                                                loadedSkinSelection = configSkinSelection.Value;
+                                                loadedSkinPath = icarusArmorFilePath;
+                                                loadedSkinFileModificationTime = File.GetLastWriteTime(icarusArmorFilePath);
+                                                loadFlag = true;
+                                            }
+                                            else
+                                            {
+                                                Logger.LogError($"Failed to load custom icarus armour skin {icarusArmorFilePath}");
+                                            }
                                         }
-                                        else
+                                        catch (IOException ioException)
                                         {
-                                            Logger.LogError($"Failed to load custom icarus armour skin {icarusArmorFilePath}");
+                                            Logger.LogWarning($"WARNING: IOException while reading \"{icarusArmorFilePath}\": {ioException.Message}");
                                         }
-                                    }
-                                    catch (IOException ioException)
-                                    {
-                                        Logger.LogWarning($"WARNING: IOException while reading \"{icarusArmorFilePath}\": {ioException.Message}");
                                     }
                                 }
+                            }
+                            catch (ArgumentException argException)
+                            {
+                                Logger.LogWarning($"WARNING: ArgumentException while trying \"{icarusArmorFilePath}\": {argException.Message}");
                             }
                         }
                         else
