@@ -4,7 +4,8 @@
 
 This mod makes it possible for you to create different skins for Icarus.  You can either select one of the pre-built skins, or provide a path to a 2048 x 2048 image png or jpg file with your own skin.
 
-![Image of built-in skins](https://raw.githubusercontent.com/GreyHak/dsp-icarus-skins/master/BuiltInSkins.jpg)
+![Image of built-in skins, set 1](https://raw.githubusercontent.com/GreyHak/dsp-icarus-skins/master/BuiltInSkins.jpg)
+![Image of built-in skins, set 2](https://raw.githubusercontent.com/GreyHak/dsp-icarus-skins/master/BuiltInSkins2.jpg)
 
 If you like this mod, please click the thumbs up at the [top of the page](https://dsp.thunderstore.io/package/GreyHak/DSP_Icarus_Skins/) (next to the Total rating).  That would be a nice thank you for me, and help other people to find a mod you enjoy.
 
@@ -22,7 +23,7 @@ The configuration file is called `greyhak.dysonsphereprogram.icarusskins.cfg`.  
  - If you installed with r2modman:  `C:\Users\<username>\AppData\Roaming\r2modmanPlus-local\DysonSphereProgram\profiles\Default\BepInEx\config\greyhak.dysonsphereprogram.icarusskins.cfg`
 
 ## Installation
-This mod uses the BepInEx mod patch framework.  So BepInEx must be installed to use this mod.  Find details for installing BepInEx [in their user guide](https://bepinex.github.io/bepinex_docs/master/articles/user_guide/installation/index.html#installing-bepinex-1).  This mod was tested with BepInEx x64 5.4.5.0 and Dyson Sphere Program 0.6.17.6137 on Windows 10.
+This mod uses the BepInEx mod patch framework.  So BepInEx must be installed to use this mod.  Find details for installing BepInEx [in their user guide](https://bepinex.github.io/bepinex_docs/master/articles/user_guide/installation/index.html#installing-bepinex-1).  This mod was tested with BepInEx x64 5.4.5.0 and Dyson Sphere Program 0.7.18.6931 on Windows 10.
 
 To manually install this mod, add the `DSPIcarusSkins.dll` to your `%PROGRAMFILES(X86)%\Steam\steamapps\common\Dyson Sphere Program\BepInEx\plugins\` folder.
 
@@ -32,11 +33,14 @@ This mod can also be installed using ebkr's [r2modman](https://dsp.thunderstore.
 The source code for this mod is available for download, review and forking on GitHub [here](https://github.com/GreyHak/dsp-icarus-skins) under the BSD 3 clause license.
 
 ## Change Log
+### v1.0.5
+ - Fixed non-critical error on startup.
+ - Five more built-in skins from @ignite.
 ### v1.0.4
  - Added ArgumentException handler.
 ### v1.0.3
  - Fixed bug; added exception handling for sharing violations while reading in custom skin file.
- - One more built-in skin.
+ - One more built-in skin from @ignite.
  - Popup notification when the skin is loaded.  This is helpful when using the AutoReload setting.
  - Decreased DLL size further.
 ### v1.0.2

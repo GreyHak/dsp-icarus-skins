@@ -75,6 +75,13 @@
   <ItemGroup>
     <EmbeddedResource Include="Built-In-Skins\ignite.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Built-In-Skins\green.jpg" />
+    <EmbeddedResource Include="Built-In-Skins\lightblue.jpg" />
+    <EmbeddedResource Include="Built-In-Skins\lightbluered.jpg" />
+    <EmbeddedResource Include="Built-In-Skins\purple.jpg" />
+    <EmbeddedResource Include="Built-In-Skins\superpurple.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>COPY $(TargetPath) "%25ProgramFiles(x86)%25\Steam\steamapps\common\Dyson Sphere Program\BepInEx\plugins"</PostBuildEvent>
