@@ -26,11 +26,12 @@ namespace DSPIcarusSkins
     {
         public const string pluginGuid = "greyhak.dysonsphereprogram.icarusskins";
         public const string pluginName = "DSP Icarus Skins";
-        public const string pluginVersion = "1.0.5";
+        public const string pluginVersion = "1.0.6";
         new internal static ManualLogSource Logger;
         new internal static BepInEx.Configuration.ConfigFile Config;
         Harmony harmony;
 
+        public static BepInEx.Configuration.ConfigEntry<bool> configModEnable;
         public static BepInEx.Configuration.ConfigEntry<UInt16> configSkinSelection;
         public static BepInEx.Configuration.ConfigEntry<string> configSkinPath;
         public static BepInEx.Configuration.ConfigEntry<bool> configAutoReload;
@@ -71,6 +72,7 @@ namespace DSPIcarusSkins
                 Logger.LogDebug($"Resource Name \"{resourceName}\".");
             }*/
 
+            configModEnable = Config.Bind<bool>("ModEnable", "EnableFlag", true, "Enables/disables this mod.  Exit back to main menu, or restart game after disabling the mod to reset colors.");
             configSkinSelection = Config.Bind<UInt16>("Skin", "Selection", 2, new BepInEx.Configuration.ConfigDescription(
                 "0:Path provided with custom skin;  1:Dark Camo;  2:Light Camo;  3:Red/White/Blue Camo;  4:Blue;  5:Color;  6:Blue/gold;  7:Red/gold;  8:Blue/Red;  9:Green;  10:Light Blue;  11:Light Blue/Red;  12:Purple;  13:Super Purple", new BepInEx.Configuration.AcceptableValueRange<UInt16>(0, 13)));
             configSkinPath = Config.Bind<string>("Skin", "Path", "", "Path to the 2048 x 2048 skin image.  This setting is only used if Selection is set to 0.");
@@ -119,7 +121,7 @@ namespace DSPIcarusSkins
 
         public static void OnConfigChanged(object sender, EventArgs e)
         {
-            if (GameMain.mainPlayer == null || GameMain.mainPlayer.animator == null)
+            if (GameMain.mainPlayer == null || GameMain.mainPlayer.animator == null || !configModEnable.Value)
             {
                 return;
             }
@@ -131,7 +133,7 @@ namespace DSPIcarusSkins
                 var mat = renderer.sharedMaterial;
                 if (mat != null)
                 {
-                    if (!icarusArmorFlag && mat.name.StartsWith("icarus-armor"))
+                    if (!icarusArmorFlag && mat.name.StartsWith("icarus-1-armor"))
                     {
                         bool loadFlag = false;
                         Texture2D icarusArmorTextureFile = new Texture2D(2048, 2048);
@@ -203,7 +205,7 @@ namespace DSPIcarusSkins
                                 for (int y = 0; y < icarusArmorTextureARGB.height; y++)
                                 {
                                     Color pixel = icarusArmorTextureFile.GetPixel(x, y);
-                                    icarusArmorTextureARGB.SetPixel(x, y, new Color(pixel.r, pixel.g, pixel.b, 0));
+                                    icarusArmorTextureARGB.SetPixel(x, y, new Color(pixel.r, pixel.g, pixel.b));
                                 }
                             }
                             icarusArmorTextureARGB.Apply();
@@ -217,7 +219,7 @@ namespace DSPIcarusSkins
                         if (icarusArmorFlag && icarusSkeletonFlag)
                             break;
                     }
-                    else if (!icarusSkeletonFlag && mat.name.StartsWith("icarus-skeleton"))
+                    else if (!icarusSkeletonFlag && mat.name.StartsWith("icarus-1-skeleton"))
                     {
                         icarusSkeletonFlag = true;
                         if (icarusArmorFlag && icarusSkeletonFlag)
@@ -225,6 +227,12 @@ namespace DSPIcarusSkins
                     }
                 }
             }
+        }
+
+        [HarmonyPostfix, HarmonyPatch(typeof(PlayerAnimator), "AnimateRenderers")]
+        public static void PlayerAnimator_AnimateRenderers_Postfix(PlayerAnimator __instance)
+        {
+            __instance.inst_materials[0].SetColor("_Color", new Color(1, 1, 1));
         }
     }
 }

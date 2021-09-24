@@ -1,6 +1,6 @@
 {
     "name": "DSP_Icarus_Skins",
-    "version_number": "1.0.5",
+    "version_number": "1.0.6",
     "website_url": "https://github.com/GreyHak/dsp-icarus-skins",
     "description": "Create your own Icarus mecha skins.",
     "dependencies": [
