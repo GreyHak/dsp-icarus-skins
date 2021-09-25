@@ -35,6 +35,7 @@ The source code for this mod is available for download, review and forking on Gi
 ## Change Log
 ### v1.0.6
  - Will now work with Dyson Sphere Program 0.8.21.8562 update.
+ - Added a config flag to enable/disable the mod.
 ### v1.0.5
  - Fixed non-critical error on startup.
  - Five more built-in skins from @ignite.
