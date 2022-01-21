@@ -229,10 +229,10 @@ namespace DSPIcarusSkins
             }
         }
 
-        [HarmonyPostfix, HarmonyPatch(typeof(PlayerAnimator), "AnimateRenderers")]
-        public static void PlayerAnimator_AnimateRenderers_Postfix(PlayerAnimator __instance)
+        [HarmonyPostfix, HarmonyPatch(typeof(MechaArmorModel), "RefreshMaterialParametersStatic")]
+        public static void MechaArmorModel_RefreshMaterialParametersStatic_Postfix(MechaArmorModel __instance)
         {
-            __instance.inst_materials[0].SetColor("_Color", new Color(1, 1, 1));
+            __instance.inst_part_ar_mat.SetColor("_Color", new Color(1, 1, 1));
         }
     }
 }
